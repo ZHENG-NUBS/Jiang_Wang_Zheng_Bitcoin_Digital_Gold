@@ -1,0 +1,103 @@
+{
+  "as_of": "20260921",
+  "downloaded_at_utc": "2026-09-21T08:29:02+00:00",
+  "source": "Yahoo Finance chart API v8 (query1, no crumb)",
+  "start_date": "2024-01-01",
+  "end_date_exclusive": "2026-06-16",
+  "note": "价格与事件分两次请求。Yahoo 的 AdjClose 在每次新分红后会回溯重算整条历史序列。本目录是某一时点的快照，请随论文一并提交，后续所有分析从此快照读取，不再联网。",
+  "files": {
+    "IBIT__20260921.csv": "b9fe8437b344c40b682cfc994a1e6882855f5cfa0a782b1a82e302daecda6161",
+    "IBIT__20260921.json": "e0961519c74c3d4b92a6afdcdb1e0e61df9789af19bcc98ea4be25e82270ce4f",
+    "IBIT__events__20260921.json": "4095a0382f15563832c210b22fd2c54d86c916add179cc9537ee708920215c41",
+    "GLD__20260921.csv": "ef53dbfd356c738875abc8a3e1144645cf284662073b252fff036c5015381116",
+    "GLD__20260921.json": "3e68a11adf0b130c3fd2ba76de668269f48d2b66356ec5f1eb388e9f295bfaf4",
+    "GLD__events__20260921.json": "e2a58a58ddea7f51b59bf471095d90f206ee8fec9de842921afebb4a3b6dee9e",
+    "TLT__20260921.csv": "8a7b88cf006d24ec8a13087a15f26128ebcc8fb0490c97ddea6c0f9430bcaa4c",
+    "TLT__20260921.json": "0411440633821ad36833022a497547b534ffee83e213b5d42c9225142f017b63",
+    "TLT__events__20260921.json": "457215c348c153c546fcae75109abaeffec9c37281ba0ab039aaa8f760521d44",
+    "SPY__20260921.csv": "b6670c200eebafa23d8ef944f255b5ac1c13ebacf84a08ab3a3d262e8328a082",
+    "SPY__20260921.json": "4235a7dcf020b9182698c2837019d7a41b674bc900adcebbd37be36777db3377",
+    "SPY__events__20260921.json": "b7b289ffd7024d56f4df4d99de44928f32a06e5bd67eea529dca26a9cd603b4d",
+    "IDX_VIX__20260921.csv": "e494cdca587c6b3576c8662fa67fb37fcd962324dcb9bb4049c88250f2a0ff8d",
+    "IDX_VIX__20260921.json": "3d7235f1cb80866f5176489ad964df20f4bf2d51b0dafbc615c703ddaa81fe20",
+    "IDX_VIX__events__20260921.json": "f7df01b15362a43fad28ba4c8fd39b08a2ff43ab5c9c5d6e20b8f90219e2dc68",
+    "IDX_GSPC__20260921.csv": "4e7bfff8a7c47e859ca9e9f7d0f567debc0a103c55140dec993149ac49e2fab1",
+    "IDX_GSPC__20260921.json": "fe75c7945ef7cd2130d9bfad518d50b878bf55ac57344b48936e0abb298c9aba",
+    "IDX_GSPC__events__20260921.json": "d953cab9c13b54fe46b4de2a8dbfd79a8092aae2088c2b42371033ad82104326",
+    "events__20260921.csv": "834fb31965c54aad07c88897c916d1cf92b00a10815cc2e1375426bb8ae60c15"
+  },
+  "tickers": {
+    "IBIT": {
+      "description": "iShares Bitcoin Trust ETF",
+      "rows": 608,
+      "first_date": "2024-01-11",
+      "last_date": "2026-06-15",
+      "exchange_tz": "America/New_York",
+      "currency": "USD",
+      "n_dividends": 0,
+      "n_splits": 0,
+      "events_missing": false,
+      "close_equals_adjclose": true
+    },
+    "GLD": {
+      "description": "SPDR Gold Shares",
+      "rows": 615,
+      "first_date": "2024-01-02",
+      "last_date": "2026-06-15",
+      "exchange_tz": "America/New_York",
+      "currency": "USD",
+      "n_dividends": 0,
+      "n_splits": 0,
+      "events_missing": false,
+      "close_equals_adjclose": true
+    },
+    "TLT": {
+      "description": "iShares 20+ Year Treasury Bond ETF",
+      "rows": 615,
+      "first_date": "2024-01-02",
+      "last_date": "2026-06-15",
+      "exchange_tz": "America/New_York",
+      "currency": "USD",
+      "n_dividends": 29,
+      "n_splits": 0,
+      "events_missing": false,
+      "close_equals_adjclose": false
+    },
+    "SPY": {
+      "description": "SPDR S&P 500 ETF Trust",
+      "rows": 615,
+      "first_date": "2024-01-02",
+      "last_date": "2026-06-15",
+      "exchange_tz": "America/New_York",
+      "currency": "USD",
+      "n_dividends": 9,
+      "n_splits": 0,
+      "events_missing": false,
+      "close_equals_adjclose": false
+    },
+    "^VIX": {
+      "description": "CBOE Volatility Index",
+      "rows": 616,
+      "first_date": "2024-01-02",
+      "last_date": "2026-06-15",
+      "exchange_tz": "America/Chicago",
+      "currency": "USD",
+      "n_dividends": 0,
+      "n_splits": 0,
+      "events_missing": false,
+      "close_equals_adjclose": true
+    },
+    "^GSPC": {
+      "description": "S&P 500 Index",
+      "rows": 615,
+      "first_date": "2024-01-02",
+      "last_date": "2026-06-15",
+      "exchange_tz": "America/New_York",
+      "currency": "USD",
+      "n_dividends": 0,
+      "n_splits": 0,
+      "events_missing": false,
+      "close_equals_adjclose": true
+    }
+  }
+}

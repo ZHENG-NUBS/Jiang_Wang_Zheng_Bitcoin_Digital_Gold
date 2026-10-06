@@ -1,0 +1,13 @@
+{
+  "files": {
+    "IRX__20260921.csv": "dbcce46b9f367bf171d714ad12ab2faf42f8b27e6ef8966c0bdf171d4e8db4be"
+  },
+  "downloaded_at_utc": {
+    "IRX__20260921.csv": "2026-09-26T08:59:51+00:00"
+  },
+  "source": {
+    "DGS3MO": "FRED, 3-Month Treasury Constant Maturity Rate (bond-equivalent, %)",
+    "DTB3": "FRED, 3-Month Treasury Bill Secondary Market Rate (discount basis, %)",
+    "IRX": "Yahoo Finance ^IRX, 13-week T-bill (discount basis, %)"
+  }
+}
