@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+
+# IDE and OS files (they can contain local paths and account settings)
+.idea/
+.vscode/
+.DS_Store
+.env
+
+# Data and results: the price data are not redistributed;
+# only the manifests and checksums are tracked
+data/raw/*
+!data/raw/manifest*.json
+!data/raw/checksums*.sha256
+data/processed/
+out/
