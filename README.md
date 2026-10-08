@@ -18,7 +18,7 @@ and bond instruments.
 | `01a`–`01e_*.py` | Data download (with `25`, the only scripts that go online) |
 | `02_build_returns.py` | Builds the analysis file `data/processed/returns__20260921.csv` from the snapshot |
 | `03_hedge_safehaven.R`, `05_stress_tables.R` | Analysis scripts in R: safe-haven regressions and stress windows |
-| `04`–`28_*.py` | Analysis scripts in Python |
+| `04`–`29_*.py` | Analysis scripts in Python |
 | `data/raw/manifest*.json` | SHA-256 checksums and download metadata of the authors' snapshots |
 | `data/raw/checksums__20260921L_X.sha256` | SHA-256 checksums of the long-sample (`L`) and ETF-appendix (`X`) snapshot files |
 | `data/checksums_processed.sha256` | SHA-256 checksum of the analysis file used in the paper |
@@ -135,12 +135,13 @@ python 25_data_appendix.py --offline                                # ~1 s; with
 python 26_tail_supplement.py                                        # ~1 min
 python 27_stress_scenarios.py                                       # ~1 s
 python 28_implementation_costs.py                                   # ~5 s
+python 29_regime_correlations.py                                    # ~20 s
 ```
 
 Order constraints: `02` before every analysis script; `10` before `26`; `20` and `21` before `24`;
 `25` before `28`, unless `data/raw/IRX__20260921.csv` is already in the snapshot. `18` imports `04` and
-`09`, so the three files must stay in the same folder. `23` needs `IDX_IRX__20260921L.csv` from `01e`.
-Otherwise the analysis scripts are independent.
+`09`, and `29` imports `19`, so these files must stay in the same folder. `23` needs
+`IDX_IRX__20260921L.csv` from `01e`. Otherwise the analysis scripts are independent.
 
 Many of the Python scripts have a `--selftest` option that checks their numerical routines against
 closed-form results, numerical integration or a reference package, and most print `CHECK [PASS]` lines
@@ -175,9 +176,11 @@ Appendices
 | Paper | Script | Output |
 |---|---|---|
 | Table A1 (VIX-regime definitions) | 19 | `out/19/sample_size_robustness.md` |
+| Table A2 (correlation matrix of the four ETFs by VIX regime) | 29 | `out/29/regime_correlations.md` |
 | Tables B1–B3 (all instruments) | 20 | `out/20/scope_expansion.md` |
 | Tables C1–C5 (GARCH estimates, extra backtests, predictive-ability tests) | 21 | `out/21/forecast_design.md`, `garch_params_*.csv` |
 | Tables C6–C9 (distribution and goodness-of-fit tests, extreme-value estimates) | 26 | `out/26_tail/tail_supplement.md`, `tab_*.csv` |
+| Figure C1 (QQ plots and PIT histograms) | 26 | `out/26_tail/fig_qq_pit.png` |
 | Table D1 and Appendix D (data construction) | 25 | `out/25_data_appendix/data_appendix_draft.md`, `tab_*.csv` |
 | Tables E1–E4, Figures E1–E2 (controlled comparison) | 24 | `out/24/controlled_comparison.md`, `fig_specification_curve`, `fig_weight_scan` |
 | Tables F1–F4 (conditional dependence) | 22 | `out/22/safe_haven_dependence.md` |
@@ -217,7 +220,8 @@ The repository was checked by running the commands above in a fresh folder conta
 scripts and the authors' snapshot (Linux; Python 3.11.15 with the package versions in
 `requirements.txt`; R 4.3.3). Every number in the outputs used in the paper was identical to the
 outputs from which the manuscript was written, and the PNG files of Figures 1–4, E1–E2 and H1 were
-pixel-identical. The Python scripts were also run on macOS during the revision.
+pixel-identical. Table A2 and Figure C1 were added afterwards and come from scripts 29 and 26 run in the
+same environment. The Python scripts were also run on macOS during the revision.
 
 ## License
 

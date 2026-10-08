@@ -625,37 +625,39 @@ def main() -> None:
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
 
-        cols = {KI: "#d97706", KG: "#1f4e79"}
+        cols = {KI: "#2a78d6", KG: "#eb6834"}    # IBIT blue, GLD orange, as in Figures 1-3 of the paper
         # Figure 1: QQ and PIT
-        fig, ax = plt.subplots(2, 3, figsize=(14, 8.5))
-        for j, k in enumerate((KI, KG)):
-            z = np.sort(Z[k])
-            pp = (np.arange(1, n + 1) - 0.5) / n
-            ax[j, 0].plot(tstd_ppf(pp, NU[k]), z, ".", ms=3, color=cols[k], label=f"fitted t (nu={NU[k]:.1f})")
-            try:
-                sk = SKT[k]
-                qs = build(None, "skewt").distribution.ppf(pp, [sk.params["eta"], sk.params["lambda"]])
-                zs = np.sort(np.asarray(sk.std_resid))
-                ax[j, 0].plot(qs, zs, "x", ms=3, color="#6b7280", alpha=.6, label="fitted skew-t")
-            except Exception:  # noqa: BLE001
-                pass
-            lim = [z.min() - .3, z.max() + .3]
-            ax[j, 0].plot(lim, lim, "k-", lw=.8)
-            ax[j, 0].set_title(f"{k}: std. residuals QQ")
-            ax[j, 0].set_xlabel("theoretical quantile"); ax[j, 0].set_ylabel("sample quantile")
-            ax[j, 0].legend(fontsize=8)
-            ax[j, 1].hist(PIT[k], bins=20, range=(0, 1), color=cols[k], alpha=.8, edgecolor="white")
-            ax[j, 1].axhline(n / 20, color="k", lw=.8, ls="--")
-            ax[j, 1].set_title(f"{k}: PIT histogram (flat = good fit)")
-            r = np.sort(R[k].values)
-            ax[j, 2].plot(stats.norm.ppf(pp), r * 100, ".", ms=3, color=cols[k])
-            ax[j, 2].plot(stats.norm.ppf(pp), (r.mean() + r.std() * stats.norm.ppf(pp)) * 100, "k-", lw=.8)
-            ax[j, 2].set_title(f"{k}: raw returns vs Normal")
-            ax[j, 2].set_xlabel("normal quantile"); ax[j, 2].set_ylabel("daily return, %")
-        plt.tight_layout()
-        for ext in ("pdf", "png"):
-            plt.savefig(OUTDIR / f"fig_qq_pit.{ext}", dpi=150)
-        plt.close()
+        with plt.rc_context({"font.size": 13, "axes.titlesize": 13, "legend.fontsize": 11}):   # legible at text width
+            fig, ax = plt.subplots(2, 3, figsize=(12.5, 7.5))
+            for j, k in enumerate((KI, KG)):
+                z = np.sort(Z[k])
+                pp = (np.arange(1, n + 1) - 0.5) / n
+                ax[j, 0].plot(tstd_ppf(pp, NU[k]), z, ".", ms=3, color=cols[k], label=f"Student-t (ν = {NU[k]:.1f})")
+                try:
+                    sk = SKT[k]
+                    qs = build(None, "skewt").distribution.ppf(pp, [sk.params["eta"], sk.params["lambda"]])
+                    zs = np.sort(np.asarray(sk.std_resid))
+                    ax[j, 0].plot(qs, zs, "x", ms=3, color="#6b7280", alpha=.6, label="skewed t")
+                except Exception:  # noqa: BLE001
+                    pass
+                lim = [z.min() - .3, z.max() + .3]
+                ax[j, 0].plot(lim, lim, "k-", lw=.8)
+                ax[j, 0].set_title(f"{k}: QQ plot")
+                ax[j, 0].set_xlabel("Theoretical quantile"); ax[j, 0].set_ylabel("Sample quantile")
+                ax[j, 0].legend()
+                ax[j, 1].hist(PIT[k], bins=20, range=(0, 1), color=cols[k], alpha=.8, edgecolor="white")
+                ax[j, 1].axhline(n / 20, color="k", lw=.8, ls="--")
+                ax[j, 1].set_title(f"{k}: PIT histogram")
+                ax[j, 1].set_xlabel("Probability integral transform"); ax[j, 1].set_ylabel("Count")
+                r = np.sort(R[k].values)
+                ax[j, 2].plot(stats.norm.ppf(pp), r * 100, ".", ms=3, color=cols[k])
+                ax[j, 2].plot(stats.norm.ppf(pp), (r.mean() + r.std() * stats.norm.ppf(pp)) * 100, "k-", lw=.8)
+                ax[j, 2].set_title(f"{k}: returns vs normal")
+                ax[j, 2].set_xlabel("Normal quantile"); ax[j, 2].set_ylabel("Daily return (%)")
+            plt.tight_layout()
+            for ext in ("pdf", "png"):
+                plt.savefig(OUTDIR / f"fig_qq_pit.{ext}", dpi=150)
+            plt.close()
 
         # Figure 2: EVT
         fig, ax = plt.subplots(2, 2, figsize=(12, 8.5))
