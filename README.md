@@ -71,14 +71,28 @@ checksums. There are two ways to obtain the data:
    shasum -a 256 -c checksums__20260921L_X.sha256      # macOS; use sha256sum -c on Linux
    ```
 
-   and compare the checksums in `manifest__20260921.json`, `manifest__20260921S.json` and
-   `manifest_rf__20260921.json` with the files.
+   and compare the checksums in `manifest__20260921.json`, `manifest_rf__20260921.json` and, for the
+   `S` files, `manifest__20260921S_replacement_20261014.json` (see the note below) with the files.
 
 2. **Download the data yourself** with scripts `01a`–`01e` (and `25` for the main-sample risk-free
    rate). The request windows are fixed in the scripts, so a new download covers the same trading
    days. Yahoo Finance recomputes its adjusted closes after every new distribution, however, so a new
    download will not be byte-identical to the authors' snapshot and results can differ in the last
    digits.
+
+**Note on the `__20260921S` snapshot (14 October 2026).** The authors' original files for this
+snapshot (the further Bitcoin, gold, equity and bond instruments and the hourly Bitcoin prices used by
+`20_scope_expansion.py`) were overwritten on 14 October 2026, when `01d_fetch_scope.py` was accidentally
+re-run with a later end date; no copy of the original files survives. The snapshot supplied on request
+is a replacement downloaded on that day with the same script and sources. It covers 1 January 2024 –
+30 September 2026 (hourly Bitcoin prices to 16 June 2026); its checksums are in
+`manifest__20260921S_replacement_20261014.json`, while `manifest__20260921S.json` keeps the checksums of
+the original files for the record. The two hourly Bitcoin files are byte-identical to the originals; the
+daily files are not, because they extend beyond the sample and Yahoo Finance had recomputed its adjusted
+closes. `20_scope_expansion.py` restricts the sample to 12 January 2024 – 15 June 2026, and run unchanged on
+the replacement files it reproduces every number in Section 4.10 and Appendix B (Tables 13–16 and B1–B3)
+of the revised manuscript exactly. The main (`__20260921`), long-sample (`L`), ETF-appendix (`X`) and
+risk-free-rate snapshots are not affected.
 
 If you need a proxy to reach the data sources, set it in the environment before running, for example
 `export HTTPS_PROXY=http://host:port`. No proxy address is stored in the scripts or written to the
