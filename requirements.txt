@@ -1,4 +1,5 @@
-# Versions the results in the paper were produced with (Python 3.11.15).
+# Versions the results in the paper were produced with (Python 3.11.15; second revision: Python 3.13.16,
+# same package versions).
 # Newer versions should work; exact versions reproduce the reported numbers to the last digit.
 numpy==2.4.4
 pandas==3.0.2
