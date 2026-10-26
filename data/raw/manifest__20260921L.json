@@ -1,0 +1,103 @@
+{
+  "as_of": "20260921L",
+  "downloaded_at_utc": "2026-10-21T04:54:04+00:00",
+  "source": "Yahoo Finance chart API v8 (query1, no crumb)",
+  "start_date": "2014-09-01",
+  "end_date_exclusive": "2026-06-16",
+  "note": "Long-sample snapshot, exclusively for the pre-checks of the item 8 BTC spot proxy. Coexists with the main snapshot 20260921, without overwriting each other. Prices and events are fetched in two separate requests; Yahoo's AdjClose is retroactively recomputed with new dividends, so this directory is a point-in-time snapshot and should be submitted together with the paper.",
+  "files": {
+    "BTC-USD__20260921L.csv": "159ee870cb79c8059732cdadd354002e5f4ab616fc3a4334e1dbf64d1f5c6b24",
+    "BTC-USD__20260921L.json": "a0669836e40f75f9d56420f8b5624520ada038b6a86beaae39c2e8d37b44933f",
+    "BTC-USD__events__20260921L.json": "d1ddd4e310f57f23010b116d94252f928286680d95df41e0aad7c169246863e8",
+    "IBIT__20260921L.csv": "b9fe8437b344c40b682cfc994a1e6882855f5cfa0a782b1a82e302daecda6161",
+    "IBIT__20260921L.json": "b0f74a11b3582a275064e17c892e514f70c7cd28c48accce08ed1596eef29147",
+    "IBIT__events__20260921L.json": "4b59ec8433c87f19442f37ccbe233914b5241301f32eb2f40baa0de15bcea698",
+    "GLD__20260921L.csv": "989a83c50fdb3018b6f03469588f191be2df08aaed48b199bfb8c33fe93895c1",
+    "GLD__20260921L.json": "772b2aa9761e3addee9910645116bda54638ac5ae9843d4b24715b3c3b0c4dcd",
+    "GLD__events__20260921L.json": "d1e3e04f47e3cd922797d0260dfc0a8ac149c7f3d7ebecb014ac453bd1ca9ef0",
+    "TLT__20260921L.csv": "cdc63ae3f1790fd88d79b4b079836f59c1eeedd3082eec9884b7adf40bc6782b",
+    "TLT__20260921L.json": "ffc6a63e107c7ff62625622b221538a5b062d6821ab8254c71d7819aa4f9740e",
+    "TLT__events__20260921L.json": "341be103bfa5b77df280c6bf8f57ac93077908d8cf2f2b5da11e72d9d0357b6f",
+    "SPY__20260921L.csv": "a0ae76767f1ed0ca4802bb3a1f1365402b3fea22bfe3081fbf3af759b7672535",
+    "SPY__20260921L.json": "193e9e470423e0a46f094f18e25337a6c199f6747db697d32442dd9abf863f55",
+    "SPY__events__20260921L.json": "381521c94316ab86d202c69216d933e21ca7ceb92a3811c659da4587c377cfc4",
+    "IDX_VIX__20260921L.csv": "a67ca54868bab864edf640791a46f4138d57256bab9159e6031782ae08c8571b",
+    "IDX_VIX__20260921L.json": "3684f55781c7e1dfc986e5ce3b87345dbaa47e12baa6b68e0f3e50ed1e7efd77",
+    "IDX_VIX__events__20260921L.json": "5a124d758f19f33cd22d363af40eb871814e2ca4f1eb39578ab8c099a0422b82",
+    "events__20260921L.csv": "8539d86fc07e50b6be63c4c692b1d6990f88323e0afaac7cd55ca0834f27ac39"
+  },
+  "tickers": {
+    "BTC-USD": {
+      "description": "Bitcoin spot (Yahoo composite)",
+      "rows": 4290,
+      "first_date": "2014-09-17",
+      "last_date": "2026-06-15",
+      "exchange_tz": "UTC",
+      "currency": "USD",
+      "n_dividends": 0,
+      "n_splits": 0,
+      "events_missing": false,
+      "close_equals_adjclose": true
+    },
+    "IBIT": {
+      "description": "iShares Bitcoin Trust ETF",
+      "rows": 608,
+      "first_date": "2024-01-11",
+      "last_date": "2026-06-15",
+      "exchange_tz": "America/New_York",
+      "currency": "USD",
+      "n_dividends": 0,
+      "n_splits": 0,
+      "events_missing": false,
+      "close_equals_adjclose": true
+    },
+    "GLD": {
+      "description": "SPDR Gold Shares",
+      "rows": 2964,
+      "first_date": "2014-09-02",
+      "last_date": "2026-06-15",
+      "exchange_tz": "America/New_York",
+      "currency": "USD",
+      "n_dividends": 0,
+      "n_splits": 0,
+      "events_missing": false,
+      "close_equals_adjclose": true
+    },
+    "TLT": {
+      "description": "iShares 20+ Year Treasury Bond ETF",
+      "rows": 2964,
+      "first_date": "2014-09-02",
+      "last_date": "2026-06-15",
+      "exchange_tz": "America/New_York",
+      "currency": "USD",
+      "n_dividends": 142,
+      "n_splits": 0,
+      "events_missing": false,
+      "close_equals_adjclose": false
+    },
+    "SPY": {
+      "description": "SPDR S&P 500 ETF Trust",
+      "rows": 2964,
+      "first_date": "2014-09-02",
+      "last_date": "2026-06-15",
+      "exchange_tz": "America/New_York",
+      "currency": "USD",
+      "n_dividends": 47,
+      "n_splits": 0,
+      "events_missing": false,
+      "close_equals_adjclose": false
+    },
+    "^VIX": {
+      "description": "CBOE Volatility Index",
+      "rows": 2965,
+      "first_date": "2014-09-02",
+      "last_date": "2026-06-15",
+      "exchange_tz": "America/Chicago",
+      "currency": "USD",
+      "n_dividends": 0,
+      "n_splits": 0,
+      "events_missing": false,
+      "close_equals_adjclose": true
+    }
+  }
+}
