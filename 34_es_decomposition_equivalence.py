@@ -51,7 +51,7 @@ import pandas as pd
 from scipy import stats
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ALPHAS = (0.05, 0.01)
+ALPHAS = (0.05, 0.025, 0.01)
 CHUNK = 1000
 
 
@@ -213,7 +213,8 @@ def main():
 
     # ---------------- report
     L_ = ["# Exact ES decomposition and equivalence test of the shape term (script 34)\n",
-          f"Margin: standardized ES of t(4) / normal = {OUT['delta_ratio']['0.05']:.3f} at 95% and "
+          f"Margin: standardized ES of t(4) / normal = {OUT['delta_ratio']['0.05']:.3f} at 95%, "
+          f"{OUT['delta_ratio']['0.025']:.3f} at 97.5% and "
           f"{OUT['delta_ratio']['0.01']:.3f} at 99%. Bootstrap B = {a.boot}.\n"]
     for key in ("etf", "long"):
         if key not in OUT:

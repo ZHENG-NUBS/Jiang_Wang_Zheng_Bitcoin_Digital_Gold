@@ -627,17 +627,18 @@ def main() -> None:
 
         cols = {KI: "#2a78d6", KG: "#eb6834"}    # IBIT blue, GLD orange, as in Figures 1-3 of the paper
         # Figure 1: QQ and PIT
-        with plt.rc_context({"font.size": 13, "axes.titlesize": 13, "legend.fontsize": 11}):   # legible at text width
-            fig, ax = plt.subplots(2, 3, figsize=(12.5, 7.5))
+        with plt.rc_context({"font.size": 13, "axes.titlesize": 13, "legend.fontsize": 11.5,
+                             "xtick.labelsize": 12, "ytick.labelsize": 12}):   # about 7 pt at the printed width
+            fig, ax = plt.subplots(2, 3, figsize=(11, 7.2))
             for j, k in enumerate((KI, KG)):
                 z = np.sort(Z[k])
                 pp = (np.arange(1, n + 1) - 0.5) / n
-                ax[j, 0].plot(tstd_ppf(pp, NU[k]), z, ".", ms=3, color=cols[k], label=f"Student-t (ν = {NU[k]:.1f})")
+                ax[j, 0].plot(tstd_ppf(pp, NU[k]), z, ".", ms=4, color=cols[k], label=f"Student-t (ν = {NU[k]:.1f})")
                 try:
                     sk = SKT[k]
                     qs = build(None, "skewt").distribution.ppf(pp, [sk.params["eta"], sk.params["lambda"]])
                     zs = np.sort(np.asarray(sk.std_resid))
-                    ax[j, 0].plot(qs, zs, "x", ms=3, color="#6b7280", alpha=.6, label="skewed t")
+                    ax[j, 0].plot(qs, zs, "x", ms=4, color="#6b7280", alpha=.6, label="skewed t")
                 except Exception:  # noqa: BLE001
                     pass
                 lim = [z.min() - .3, z.max() + .3]
@@ -648,11 +649,11 @@ def main() -> None:
                 ax[j, 1].hist(PIT[k], bins=20, range=(0, 1), color=cols[k], alpha=.8, edgecolor="white")
                 ax[j, 1].axhline(n / 20, color="k", lw=.8, ls="--")
                 ax[j, 1].set_title(f"{k}: PIT histogram")
-                ax[j, 1].set_xlabel("Probability integral transform"); ax[j, 1].set_ylabel("Count")
+                ax[j, 1].set_xlabel("PIT value"); ax[j, 1].set_ylabel("Count")
                 r = np.sort(R[k].values)
-                ax[j, 2].plot(stats.norm.ppf(pp), r * 100, ".", ms=3, color=cols[k])
+                ax[j, 2].plot(stats.norm.ppf(pp), r * 100, ".", ms=4, color=cols[k])
                 ax[j, 2].plot(stats.norm.ppf(pp), (r.mean() + r.std() * stats.norm.ppf(pp)) * 100, "k-", lw=.8)
-                ax[j, 2].set_title(f"{k}: returns vs normal")
+                ax[j, 2].set_title(f"{k}: returns, normal QQ")
                 ax[j, 2].set_xlabel("Normal quantile"); ax[j, 2].set_ylabel("Daily return (%)")
             plt.tight_layout()
             for ext in ("pdf", "png"):

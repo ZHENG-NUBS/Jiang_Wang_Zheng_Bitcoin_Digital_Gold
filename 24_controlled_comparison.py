@@ -424,6 +424,65 @@ def selftest():
     return ok
 
 
+# ============================================================ Figure E1
+SPEC_EN = {"Baseline": "Baseline", "A Weight (both sleeves)": "Weight (both sleeves)", "B Rebalancing": "Rebalancing",
+           "C Sample period (IBIT, main sample)": "Sub-period (IBIT)",
+           "C Sample period (BTC-USD, long sample)": "Period (BTC-USD, 2014–26)", "D Equity/bond legs": "Equity/bond legs",
+           "E Risk measure": "Risk measure", "F Pricing time": "Pricing time",
+           "F Bitcoin/gold instruments": "Bitcoin/gold instruments", "F Forecast model (out-of-sample)": "Forecast model (OOS)"}
+
+
+def plot_spec_curve(sp, base, outdir):
+    """Figure E1: specification curve with 95% bootstrap intervals and the dimension varied (font sizes chosen to be
+    legible at the printed width of about 15 cm). The outcome is the ratio of the risk measure of the Bitcoin
+    portfolio to that of the gold portfolio: ES95 except in the risk-measure dimension (column `metric`)."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.ticker import FixedLocator, FuncFormatter, NullLocator
+    INK, INK2, GRID = "#0b0b0b", "#52514e", "#e6e5e1"
+    rc = {"font.family": "DejaVu Sans", "font.size": 10, "axes.edgecolor": INK2, "axes.labelcolor": INK,
+          "xtick.color": INK2, "ytick.color": INK2, "text.color": INK, "axes.grid": True, "grid.color": GRID,
+          "grid.linewidth": 0.6, "axes.spines.top": False, "axes.spines.right": False, "legend.frameon": False,
+          "legend.fontsize": 9, "xtick.labelsize": 9.5, "ytick.labelsize": 9.5}
+    dims = list(dict.fromkeys(sp.dim))
+    cols = ["#0b0b0b", "#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948", "#52514e"]
+    cmap = {dm: cols[i % len(cols)] for i, dm in enumerate(dims)}
+    s2 = sp.sort_values("ratio", kind="mergesort").reset_index(drop=True)
+    with plt.rc_context(rc):
+        fig, axs = plt.subplots(2, 1, figsize=(7.2, 8.0), sharex=True, gridspec_kw={"height_ratios": [1.45, 1]})
+        ax = axs[0]
+        x = np.arange(len(s2))
+        for dm in dims:
+            m = (s2.dim == dm).values
+            ax.vlines(x[m], s2.lo[m], s2.hi[m], color=cmap[dm], lw=0.7, alpha=0.5)
+            ax.plot(x[m], s2.ratio[m], "o", ms=3.4, color=cmap[dm], label=SPEC_EN.get(dm, dm))
+        ax.axhline(1, color=INK2, lw=0.9)
+        ax.axhline(base, color=INK2, lw=0.7, ls=(0, (3, 2)))
+        ax.set_yscale("log")
+        ax.yaxis.set_major_locator(FixedLocator([0.8, 1, 1.25, 1.5, 2, 3, 4, 6]))
+        ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
+        ax.yaxis.set_minor_locator(NullLocator())
+        ax.set_ylabel("Ratio of the risk measure,\nBitcoin / gold portfolio (log scale)")
+        ax.set_title("a. Ratio in each specification (one dimension varied at a time;\n95% bootstrap intervals; "
+                     "ES95 unless the risk measure is varied)", loc="left", fontsize=10)
+        ax.legend(loc="upper left", ncol=2, fontsize=9, handletextpad=0.3, columnspacing=1.0, markerscale=1.2)
+        ax = axs[1]
+        for j, dm in enumerate(dims):
+            m = (s2.dim == dm).values
+            ax.plot(x[m], np.full(m.sum(), j), "|", ms=9, mew=1.3, color=cmap[dm])
+        ax.set_yticks(range(len(dims)))
+        ax.set_yticklabels([SPEC_EN.get(dm, dm) for dm in dims], fontsize=9.5)
+        ax.invert_yaxis()
+        ax.grid(axis="y", visible=False)
+        ax.set_xlabel("Specifications, sorted by ratio")
+        ax.set_title("b. Dimension varied", loc="left", fontsize=10)
+        fig.tight_layout()
+        for ext in ("png", "pdf"):
+            fig.savefig(os.path.join(outdir, f"fig_specification_curve.{ext}"), dpi=300)
+        plt.close(fig)
+
+
 # ============================================================ Main program
 def main():
     ap = argparse.ArgumentParser()
@@ -431,7 +490,14 @@ def main():
     ap.add_argument("--raw", default=None)
     ap.add_argument("--outdir", default="out/24")
     ap.add_argument("--quick", action="store_true")
+    ap.add_argument("--replot", default=None, help="redraw Figure E1 from an existing specification_curve.csv and exit")
     a = ap.parse_args()
+    if a.replot:
+        sp = pd.read_csv(a.replot)
+        os.makedirs(a.outdir, exist_ok=True)
+        plot_spec_curve(sp, float(sp.loc[sp.dim == "Baseline", "ratio"].iloc[0]), a.outdir)
+        print(f"Figure E1 redrawn from {a.replot} in {a.outdir}")
+        return
     a.data = a.data or find_main(); a.raw = a.raw or find_raw()
     if a.data is None:
         sys.exit("Cannot find data/processed/returns__YYYYMMDD.csv; please specify with --data.")
@@ -641,6 +707,7 @@ def main():
                      "; ".join(sorted(set(gdf.source)))])
     w(md(rows, ["Dimension", "Specifications", "Min", "Median", "Max", "CI entirely above 1", "CI entirely below 1", "Source"]))
     w(f"{len(sp)} specifications in total; specifications with ratio < 1: {', '.join(sp[sp.ratio < 1].label) if (sp.ratio < 1).any() else 'none'}.\n")
+    sp["metric"] = np.where(sp.dim == "E Risk measure", sp.label, "ES95")       # statistic whose ratio is reported
     sp.to_csv(os.path.join(a.outdir, "specification_curve.csv"), index=False)
     OUT["spec_summary"] = rows
 
@@ -655,41 +722,7 @@ def main():
                              "axes.labelcolor": INK, "xtick.color": INK2, "ytick.color": INK2, "text.color": INK,
                              "axes.grid": True, "grid.color": GRID, "grid.linewidth": 0.6, "axes.spines.top": False,
                              "axes.spines.right": False, "legend.frameon": False, "legend.fontsize": 7})
-        EN = {"Baseline": "Baseline", "A Weight (both sleeves)": "Weight (both sleeves)", "B Rebalancing": "Rebalancing",
-              "C Sample period (IBIT, main sample)": "Sub-period (IBIT)", "C Sample period (BTC-USD, long sample)": "Period (BTC-USD, 2014–26)",
-              "D Equity/bond legs": "Equity/bond legs", "E Risk measure": "Risk measure", "F Pricing time": "Pricing time",
-              "F Bitcoin/gold instruments": "Bitcoin/gold instruments", "F Forecast model (out-of-sample)": "Forecast model (OOS)"}
-        dims = list(dict.fromkeys(sp.dim))
-        cols = ["#0b0b0b", "#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948", "#52514e"]
-        cmap = {dm: cols[i % len(cols)] for i, dm in enumerate(dims)}
-        s2 = sp.sort_values("ratio").reset_index(drop=True)
-        fig, axs = plt.subplots(2, 1, figsize=(6.8, 5.6), sharex=True, gridspec_kw={"height_ratios": [1.5, 1]})
-        ax = axs[0]
-        x = np.arange(len(s2))
-        for dm in dims:
-            m = (s2.dim == dm).values
-            ax.vlines(x[m], s2.lo[m], s2.hi[m], color=cmap[dm], lw=0.6, alpha=0.5)
-            ax.plot(x[m], s2.ratio[m], "o", ms=2.6, color=cmap[dm], label=EN.get(dm, dm))
-        ax.axhline(1, color=INK2, lw=0.8); ax.axhline(base, color=INK2, lw=0.6, ls=(0, (3, 2)))
-        from matplotlib.ticker import FixedLocator, FuncFormatter, NullLocator
-        ax.set_yscale("log")
-        ax.yaxis.set_major_locator(FixedLocator([0.8, 1, 1.25, 1.5, 2, 3, 4, 6]))
-        ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}")); ax.yaxis.set_minor_locator(NullLocator())
-        ax.set_ylabel("ES95 ratio, Bitcoin / gold portfolio (log scale)")
-        ax.set_title("a. Specification curve (one dimension varied at a time; 95% bootstrap intervals)", loc="left", fontsize=8)
-        ax.legend(loc="upper left", ncol=2, fontsize=6.5)
-        ax = axs[1]
-        for j, dm in enumerate(dims):
-            m = (s2.dim == dm).values
-            ax.plot(x[m], np.full(m.sum(), j), "|", ms=6, mew=1.0, color=cmap[dm])
-        ax.set_yticks(range(len(dims))); ax.set_yticklabels([EN.get(dm, dm) for dm in dims], fontsize=6.5)
-        ax.invert_yaxis(); ax.grid(axis="y", visible=False)
-        ax.set_xlabel("Specifications, sorted by ratio")
-        ax.set_title("b. Dimension varied", loc="left", fontsize=8)
-        fig.tight_layout()
-        for ext in ("png", "pdf"):
-            fig.savefig(os.path.join(a.outdir, f"fig_specification_curve.{ext}"), dpi=300)
-        plt.close(fig)
+        plot_spec_curve(sp, base, a.outdir)
         # Weight-scan figure
         panels = [("Main sample: IBIT vs GLD", CURVE, OUT["A_main"]["risk_equiv"])]
         if RL is not None:

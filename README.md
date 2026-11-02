@@ -21,7 +21,7 @@ Further data sets cover other Bitcoin, gold, equity and bond instruments and hou
 | `02_build_returns.py` | Builds the analysis file `data/processed/returns__20260921.csv` from the snapshot |
 | `03_hedge_safehaven.R`, `05_stress_tables.R` | Analysis scripts in R: safe-haven regressions and stress windows |
 | `04`–`29_*.py` | Analysis scripts in Python (first revision) |
-| `30`–`38_*.py`, `longdata.py` | Analysis scripts added in the second revision; `longdata.py` loads the three samples |
+| `30`–`43_*.py`, `longdata.py` | Analysis scripts added in the second revision; `longdata.py` loads the three samples |
 | `data/raw/manifest*.json` | SHA-256 checksums and download metadata of the authors' snapshots |
 | `data/raw/checksums__20260921L_X.sha256` | SHA-256 checksums of the long-sample (`L`) and ETF-appendix (`X`) snapshot files of September 2026 |
 | `data/raw/checksums__20261021_L_G.sha256` | SHA-256 checksums of the long-sample snapshot downloaded again on 21 October 2026 (`L`) and of the gold long-sample snapshot (`G`) used in the second revision |
@@ -159,7 +159,16 @@ python 35_full_bootstrap_dependence.py   # two-stage bootstrap for copula and DC
 python 36_optimizer_weights.py           # out-of-sample weight distributions, fallback rule
 python 37_mean_specification.py          # constant versus AR(1) mean
 python 38_specification_families.py      # specification families, rebalancing decomposition
+python 39_event_ledger.py                 # drawdown ledger and in-sample stress windows (one convention)
+python 40_risk_equivalent_weight.py       # risk-equivalent weight w*: existence, intervals, rolling windows
+python 41_structural_scenarios.py         # severe-state scenarios under stated assumptions
+python 42_reviewer3_checks.py             # spanning tests, equivalence test of λL, VIX interaction, QR intervals
+python 43_episode_dispersion.py           # episode multipliers: volatility scaling and leave-one-out
 ```
+
+`24_controlled_comparison.py --replot out/24/specification_curve.csv` redraws Figure E1 from an existing
+run without repeating the bootstrap; the file's `metric` column names the risk measure of each specification
+(ES95 except in the risk-measure dimension).
 
 `35` can be run in parallel, one process per asset, with `--items`, for example
 `--items "etf|IBIT,etf|TLT,btc_long|TLT"` and `--items "btc_long|BTC,etf|GLD,btc_long|GLD"`; each item has
@@ -170,7 +179,7 @@ Order constraints: `02` before every analysis script; `10` before `26`; `20` and
 `25` before `28`, unless `data/raw/IRX__20260921.csv` is already in the snapshot. `18` imports `04` and
 `09`, and `29` imports `19`, so these files must stay in the same folder. `23` needs
 `IDX_IRX__20260921L.csv` from `01e`. `31` before `32` and `33`; `24` and `28` before `38`; `33` imports
-`21`, and `36` imports `23`. Otherwise the analysis scripts are independent.
+`21`, and `36` imports `23`; `40` imports `24`. Otherwise the analysis scripts are independent.
 
 Many of the Python scripts have a `--selftest` option that checks their numerical routines against
 closed-form results, numerical integration or a reference package, and most print `CHECK [PASS]` lines
@@ -190,18 +199,19 @@ Main text
 | Table 3 (hypotheses) | — | — |
 | Table 4 (portfolio strategies) | 23 | `out/23/portfolio_robust.md` |
 | Table 5 (in-sample VaR and ES) | 09; intervals from 11 and 19; long-sample ratios from 34 | `out/09/`, `out/11_robust/`, `out/19/`, `out/34/` |
-| Table 6 (exact decomposition, equivalence tests) | 34 | `out/34/` |
+| Table 6 (exact decomposition at 95%, 97.5% and 99%, equivalence tests) | 34 | `out/34/` |
 | Table 7 (out-of-sample backtests, ETF sample) | 21; AR(1) mean from 33 | `out/21/forecast_design.md`, `out/33/` |
 | Table 8 (out-of-sample backtests, long samples) | 33 | `out/33/` |
 | Table 9, Figure 4 (market regimes, Forbes–Rigobon tests) | 31 | `out/31/`, `fig_ms_regimes.png` |
 | Table 10 (hedge and safe-haven regressions) | 32; tail slope and MDE from 03 and 12 | `out/32/`, `out/03_hedge/results.txt` |
-| Table 11 (primary and robustness dependence measures) | 22, 32 and 35 | `out/22/`, `out/32/`, `out/35/` |
+| Table 11 (primary and robustness dependence measures; bias-corrected quantile-regression intervals and equivalence test of λL) | 22, 32, 35 and 42 | `out/22/`, `out/32/`, `out/35/`, `out/42/` |
 | Table 12 (equity drawdowns since 2000) | 32 | `out/32/` |
-| Table 13 (in-sample stress windows) | 09 (also 05) | `out/09/paper_numbers.md`, `out/05_stress/` |
+| Table 13 (in-sample stress windows) | 39 | `out/39/` |
 | Table 14 (Monte Carlo 10-day losses) | 19 | `out/19/sample_size_robustness.md` |
 | Table 15 (out-of-sample allocation, risk and return) | 36 (strategies from 23) | `out/36/` |
 | Table 16 (IBIT versus BTC-USD decomposition) | 20 | `out/20/scope_expansion.md` |
 | Table 17 (specification families, rebalancing rules) | 38 (from 24 and 28) | `out/38/` |
+| Section 4.4 (SPY × VIX interaction without April 2025) | 42 | `out/42/reviewer3_checks.md` |
 | Figures 1–3 | 18 | `out/18_fig/` |
 | Figure 5 (DCC correlation and time-varying beta) | 22 | `out/22/fig_safe_haven_dynamics.png` |
 
@@ -217,15 +227,20 @@ Appendices
 | Table C10 (constant versus AR(1) mean) | 37 | `out/37/` |
 | Table D1 and Appendix D | 25 | `out/25_data_appendix/` |
 | Tables E1–E4, Figures E1–E2 | 24 | `out/24/` |
+| Risk-equivalent weight w* (Appendix E) | 40 | `out/40/` |
 | Tables F1–F4 | 22 | `out/22/safe_haven_dependence.md` |
 | Table F5 (two-stage bootstrap) | 35 | `out/35/full_bootstrap.md` |
 | Tables G1–G3 | 27 | `out/27_stress/` |
-| Table G4 (drawdowns of 8% or more since 2014) | 15 | `out/15_episodes/episode_study.md` |
+| Table G4 (drawdowns of 8% or more since 2014) | 15; volatility scaling and leave-one-out in the text from 43 | `out/15_episodes/episode_study.md`, `out/43/` |
+| Table G5 (drawdown ledger) | 39 | `out/39/` |
+| Table G6 (severe-state scenarios) | 41 | `out/41/` |
 | Tables H1, H3, H4, Figure H1 | 23 | `out/23/portfolio_robust.md` |
 | Table H2 (long-sample allocation and fallback rule) | 36 | `out/36/` |
 | Tables H5–H8 | 28 | `out/28_costs/` |
+| Table H9 (spanning tests) | 42 | `out/42/reviewer3_checks.md` |
 | Tables I1–I2 (Markov-switching models, Forbes–Rigobon tests) | 31 | `out/31/` |
 | Tables I3–I4 (threshold and Markov-switching regressions) | 32 | `out/32/` |
+| Tables D2, F6 (fund structure from the filings cited in the paper; what each dependence measure estimates) | — | — |
 | Table J1 (inference register) | — | — |
 
 ## Supporting scripts
