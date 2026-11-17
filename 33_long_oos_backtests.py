@@ -15,8 +15,8 @@ comment 9: residual autocorrelation in the IBIT portfolio).
 
 Samples and portfolios (one-third each, daily rebalanced):
     ETF sample         IBIT portfolio, GLD portfolio                      window 250 (as script 21)
-    Bitcoin long       BTC portfolio (BTC-USD, SPY, TLT), GLD portfolio   windows 250 and 1000
-    Gold long          gold portfolio (gold, SPY, TLT), from July 2002    windows 250 and 1000
+    Bitcoin long       BTC portfolio (BTC-USD, SPY, TLT), GLD portfolio   windows 250 (baseline) and 1000 (robustness)
+    Gold long          gold portfolio (gold, SPY, TLT), from July 2002    windows 250 (baseline) and 1000 (robustness)
 Additional breakdowns from the stored forecasts: VaR breach rates and Kupiec p-values in each SPY
 regime of script 31 (tranquil / turbulent / crisis) and in calendar sub-periods; the out-of-sample
 ES ratio (BTC or IBIT portfolio over GLD portfolio) with a stationary block bootstrap interval.

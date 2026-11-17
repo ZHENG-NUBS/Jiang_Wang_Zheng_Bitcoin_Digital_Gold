@@ -3,8 +3,8 @@
 Python and R code for
 
 > Jiang, B., Wang, J. and Zheng, Z. *Is Bitcoin "Digital Gold"? An Empirical Study Based on
-> Multi-Model VaR/ES Measures, Stress Testing, and Portfolio Optimization.* Second revision, submitted
-> to the *Journal of Risk and Financial Management* (manuscript jrfm-4584647), October 2026.
+> Multi-Model VaR/ES Measures, Stress Testing, and Portfolio Optimization.* Revised manuscript, submitted
+> to the *Journal of Risk and Financial Management* (manuscript jrfm-4584647), November 2026.
 
 The scripts download the data, build the return series and produce every table and figure in the
 paper. The ETF sample is 607 daily returns of IBIT, GLD, TLT and SPY (12 January 2024 – 15 June 2026).
@@ -21,7 +21,7 @@ Further data sets cover other Bitcoin, gold, equity and bond instruments and hou
 | `02_build_returns.py` | Builds the analysis file `data/processed/returns__20260921.csv` from the snapshot |
 | `03_hedge_safehaven.R`, `05_stress_tables.R` | Analysis scripts in R: safe-haven regressions and stress windows |
 | `04`–`29_*.py` | Analysis scripts in Python (first revision) |
-| `30`–`43_*.py`, `longdata.py` | Analysis scripts added in the second revision; `longdata.py` loads the three samples |
+| `30`–`45_*.py`, `longdata.py` | Analysis scripts added in the revisions after peer review; `longdata.py` loads the three samples |
 | `data/raw/manifest*.json` | SHA-256 checksums and download metadata of the authors' snapshots |
 | `data/raw/checksums__20260921L_X.sha256` | SHA-256 checksums of the long-sample (`L`) and ETF-appendix (`X`) snapshot files of September 2026 |
 | `data/raw/checksums__20261021_L_G.sha256` | SHA-256 checksums of the long-sample snapshot downloaded again on 21 October 2026 (`L`) and of the gold long-sample snapshot (`G`) used in the second revision |
@@ -95,6 +95,16 @@ If you need a proxy to reach the data sources, set it in the environment before 
 `export HTTPS_PROXY=http://host:port`. No proxy address is stored in the scripts or written to the
 manifests.
 
+### Which analyses need which data
+
+Every table and figure that reports results is computed from the price data of the snapshots listed under
+Sources, none of which is in this repository, so no analysis runs on the repository alone. With the authors'
+snapshots, which must be requested from the corresponding author, every result is **reproduced** exactly; with a
+new download from the vendors (scripts `01a`–`01f` and `25`) it is **reconstructed**, and results can differ in
+the last digits because the vendor revises adjusted prices. The checksums show whether a downloaded file is
+identical to the authors'. Tables 3, D2, F6 and J1 are not computed. Random numbers come from seeds fixed in each
+script, so repeated runs on the same data give identical output.
+
 ### The analysis file
 
 `02_build_returns.py` turns the main snapshot into `data/processed/returns__20260921.csv`: simple and
@@ -164,6 +174,8 @@ python 40_risk_equivalent_weight.py       # risk-equivalent weight w*: existence
 python 41_structural_scenarios.py         # severe-state scenarios under stated assumptions
 python 42_reviewer3_checks.py             # spanning tests, equivalence test of λL, VIX interaction, QR intervals
 python 43_episode_dispersion.py           # episode multipliers: volatility scaling and leave-one-out
+python 44_contagion_sensitivity.py        # Forbes–Rigobon test with scaled delta; regime slopes (Dimson)
+python 45_demeaned_standardized_es.py     # standardized ES ratio of Table 6 with demeaned returns
 ```
 
 `24_controlled_comparison.py --replot out/24/specification_curve.csv` redraws Figure E1 from an existing
@@ -179,7 +191,7 @@ Order constraints: `02` before every analysis script; `10` before `26`; `20` and
 `25` before `28`, unless `data/raw/IRX__20260921.csv` is already in the snapshot. `18` imports `04` and
 `09`, and `29` imports `19`, so these files must stay in the same folder. `23` needs
 `IDX_IRX__20260921L.csv` from `01e`. `31` before `32` and `33`; `24` and `28` before `38`; `33` imports
-`21`, and `36` imports `23`; `40` imports `24`. Otherwise the analysis scripts are independent.
+`21`, and `36` imports `23`; `40` imports `24`; `44` needs `out/31/regimes.csv` from `31`; `45` needs `out/34/es_decomposition.json` from `34` and imports `11`, `22` and `34`. Otherwise the analysis scripts are independent.
 
 Many of the Python scripts have a `--selftest` option that checks their numerical routines against
 closed-form results, numerical integration or a reference package, and most print `CHECK [PASS]` lines
@@ -189,7 +201,7 @@ default settings.
 
 ## Where each result in the paper comes from
 
-Numbers refer to the second revision.
+Numbers refer to the revised manuscript of November 2026.
 
 Main text
 
@@ -199,10 +211,10 @@ Main text
 | Table 3 (hypotheses) | — | — |
 | Table 4 (portfolio strategies) | 23 | `out/23/portfolio_robust.md` |
 | Table 5 (in-sample VaR and ES) | 09; intervals from 11 and 19; long-sample ratios from 34 | `out/09/`, `out/11_robust/`, `out/19/`, `out/34/` |
-| Table 6 (exact decomposition at 95%, 97.5% and 99%, equivalence tests) | 34 | `out/34/` |
+| Table 6 (exact decomposition at 95%, 97.5% and 99%, equivalence tests) | 34; demeaned returns (note to Table 6 and Section 4.2) from 45 | `out/34/`, `out/45/` |
 | Table 7 (out-of-sample backtests, ETF sample) | 21; AR(1) mean from 33 | `out/21/forecast_design.md`, `out/33/` |
 | Table 8 (out-of-sample backtests, long samples) | 33 | `out/33/` |
-| Table 9, Figure 4 (market regimes, Forbes–Rigobon tests) | 31 | `out/31/`, `fig_ms_regimes.png` |
+| Table 9, Figure 4 (market regimes, Forbes–Rigobon tests) | 31; sensitivity to δ and regime slopes in Section 4.4 from 44 | `out/31/`, `fig_ms_regimes.png`, `out/44/` |
 | Table 10 (hedge and safe-haven regressions) | 32; tail slope and MDE from 03 and 12 | `out/32/`, `out/03_hedge/results.txt` |
 | Table 11 (primary and robustness dependence measures; bias-corrected quantile-regression intervals and equivalence test of λL) | 22, 32, 35 and 42 | `out/22/`, `out/32/`, `out/35/`, `out/42/` |
 | Table 12 (equity drawdowns since 2000) | 32 | `out/32/` |
@@ -225,7 +237,7 @@ Appendices
 | Tables C1–C5 | 21 | `out/21/forecast_design.md` |
 | Tables C6–C9, Figure C1 | 26 | `out/26_tail/` |
 | Table C10 (constant versus AR(1) mean) | 37 | `out/37/` |
-| Table D1 and Appendix D | 25 | `out/25_data_appendix/` |
+| Table D1 and Appendix D | 25; 16:00 ET Bitcoin prices (13:00 ET on early-closing days) from 20 | `out/25_data_appendix/`, `out/20/scope_expansion.md` |
 | Tables E1–E4, Figures E1–E2 | 24 | `out/24/` |
 | Risk-equivalent weight w* (Appendix E) | 40 | `out/40/` |
 | Tables F1–F4 | 22 | `out/22/safe_haven_dependence.md` |
@@ -233,7 +245,7 @@ Appendices
 | Tables G1–G3 | 27 | `out/27_stress/` |
 | Table G4 (drawdowns of 8% or more since 2014) | 15; volatility scaling and leave-one-out in the text from 43 | `out/15_episodes/episode_study.md`, `out/43/` |
 | Table G5 (drawdown ledger) | 39 | `out/39/` |
-| Table G6 (severe-state scenarios) | 41 | `out/41/` |
+| Table G6 and Section 4.6 (severe-state scenarios, including the recovery path) | 41 | `out/41/` |
 | Tables H1, H3, H4, Figure H1 | 23 | `out/23/portfolio_robust.md` |
 | Table H2 (long-sample allocation and fallback rule) | 36 | `out/36/` |
 | Tables H5–H8 | 28 | `out/28_costs/` |
@@ -257,6 +269,10 @@ or have been superseded by a later script.
 | `18b_backtest_supplement.py` | Additional backtests; superseded by `21` |
 
 ## Verification
+
+Editor round (November 2026): script `45` was added; it reuses the bootstrap draws of `34` and checks that it
+reproduces that script's point estimates and 90% intervals (`CHECK PASS`). No other calculation changed; the
+docstring of `33` now states that the 250-day window is the baseline and the 1000-day window a robustness check.
 
 Second revision: the scripts added in the second revision (`30`–`38`) and scripts `12`, `13`, `15`, `22`,
 `23` and `27`, which read the long-sample snapshot, were run on Linux with Python 3.13.16 and the package
