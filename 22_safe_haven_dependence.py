@@ -968,7 +968,7 @@ def main():
         ax.set_ylabel("DCC correlation with SPY"); ax.set_ylim(-0.65, 1.0)
         h_, l_ = ax.get_legend_handles_labels()
         ax.legend(h_ + [Patch(color=SHADE, lw=0)], l_ + ["VIX > 25"], loc="upper left", ncol=4)
-        ax.set_title("a. Dynamic conditional correlation, DCC(1,1)", loc="left", fontsize=8)
+        ax.set_title("(a) Dynamic conditional correlation, DCC(1,1)", loc="left", fontsize=8)
         ax = axs[1]
         for asset, c, lab in (("IBIT", C_IBIT, "IBIT"), ("GLD", C_GLD, "GLD")):
             b_, P_ = RES["main"][asset]["tvp_path"]
@@ -978,7 +978,7 @@ def main():
         ax.plot(dates[tail], np.full(tail.sum(), -1.15), "|", color=INK, ms=6, mew=0.9)
         ax.set_ylabel("Time-varying beta on SPY")
         ax.legend(loc="upper left", ncol=2)
-        ax.set_title("b. Time-varying beta (Kalman smoother, 95% band)", loc="left", fontsize=8)
+        ax.set_title("(b) Time-varying beta (Kalman smoother, 95% band)", loc="left", fontsize=8)
         fig.tight_layout()
         for ext in ("png", "pdf"):
             fig.savefig(os.path.join(a.outdir, f"fig_safe_haven_dynamics.{ext}"), dpi=300)

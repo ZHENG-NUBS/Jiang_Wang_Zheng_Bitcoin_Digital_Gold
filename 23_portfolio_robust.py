@@ -974,15 +974,16 @@ def main():
             ax.yaxis.set_major_locator(FixedLocator([1, 1.5, 2, 3, 5, 7, 10, 15]))
             ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}")); ax.yaxis.set_minor_locator(NullLocator())
             ax.legend(loc="upper left", ncol=2)
-            ax.set_title("a. Out-of-sample wealth, 250-day window, monthly rebalancing", loc="left", fontsize=8)
+            ax.set_title("(a) Out-of-sample wealth, 250-day window, monthly rebalancing", loc="left", fontsize=8)
             ax = axs[1]
-            ax.axhline(25, color=INK2, lw=0.9, ls=(0, (4, 2)))
-            ax.text(dd[-1], 26.5, "1/N = 25%", color=INK2, fontsize=7, ha="right", va="bottom")
+            ax.axhline(25, color=INK2, lw=0.9, ls=(0, (4, 2)), label="1/N weight (25%)")
             for c, col in SER:
                 rp = o[c]["reb_pos"]
                 ax.step(dd[rp], o[c]["w_reb"][:, 0] * 100, where="post", color=col, lw=1.0)
-            ax.set_ylabel("Bitcoin weight (%)"); ax.set_ylim(-2, 72)
-            ax.set_title("b. Weight assigned to Bitcoin at each rebalancing", loc="left", fontsize=8)
+            wmax = max(float(np.max(o[c]["w_reb"][:, 0])) for c, _ in SER) * 100
+            ax.set_ylabel("Bitcoin weight (%)"); ax.set_ylim(-2, max(72.0, 10 * np.ceil(wmax / 10) + 2))
+            ax.legend(loc="upper left")                  # dashed line labeled in a legend, not over the series
+            ax.set_title("(b) Weight assigned to Bitcoin at each rebalancing", loc="left", fontsize=8)
             fig.tight_layout()
             for ext in ("png", "pdf"):
                 fig.savefig(os.path.join(a.outdir, f"fig_portfolio_oos_long.{ext}"), dpi=300)

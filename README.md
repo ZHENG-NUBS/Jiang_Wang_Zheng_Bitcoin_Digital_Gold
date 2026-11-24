@@ -270,6 +270,8 @@ or have been superseded by a later script.
 
 ## Verification
 
+Proof stage (November 2026): the panel titles of Figures 5 and A4 are labeled (a) and (b), and panel (b) of Figure A4 shows the full range of the weights with the 1/N line in a legend (scripts `22` and `23`); rerunning both scripts gave the same results as before.
+
 Editor round (November 2026): script `45` was added; it reuses the bootstrap draws of `34` and checks that it
 reproduces that script's point estimates and 90% intervals (`CHECK PASS`). No other calculation changed; the
 docstring of `33` now states that the 250-day window is the baseline and the 1000-day window a robustness check.
